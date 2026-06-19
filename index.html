@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospedagem Maquinistas</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2563eb">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --danger: #dc2626;
+            --danger-hover: #b91c1c;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+        }
+        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; }
+        
+        .card { background: var(--card-bg); padding: 32px 24px; border-radius: 16px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05); width: 100%; max-width: 400px; text-align: center; border: 1px solid #e2e8f0; }
+        
+        .logo-area { margin-bottom: 24px; }
+        .logo-container { width: 64px; height: 64px; background: #eff6ff; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 12px; }
+        .logo-container svg { width: 32px; height: 32px; color: var(--primary); }
+        
+        h2 { font-size: 22px; font-weight: 700; margin: 0 0 8px 0; color: var(--text); }
+        p.subtitle { color: var(--text-light); font-size: 14px; margin: 0 0 24px 0; line-height: 1.5; }
+        
+        input[type="text"] { width: 100%; padding: 14px 16px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 16px; background-color: #f8fafc; transition: all 0.2s; text-align: center; font-weight: 600; letter-spacing: 1px; }
+        input[type="text"]:focus { outline: none; border-color: var(--primary); background-color: #fff; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15); }
+        
+        /* Grid de Hotéis Bonitão */
+        .hotel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
+        .hotel-card { border: 2px solid #e2e8f0; padding: 16px 8px; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 14px; transition: all 0.2s; background: #fff; color: var(--text-light); }
+        .hotel-card.selected { border-color: var(--primary); background: #eff6ff; color: var(--primary); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1); }
+        
+        button { width: 100%; padding: 16px; border-radius: 10px; font-size: 16px; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-primary { background-color: var(--primary); color: white; }
+        .btn-primary:hover { background-color: var(--primary-hover); }
+        .btn-danger { background-color: var(--danger); color: white; }
+        .btn-danger:hover { background-color: var(--danger-hover); }
+        button:disabled { background-color: #cbd5e1 !important; color: #94a3b8 !important; cursor: not-allowed; }
+        
+        .btn-text { background: none; color: var(--text-light); font-size: 14px; font-weight: 500; margin-top: 24px; padding: 8px; }
+        .btn-text:hover { color: var(--text); decoration: underline; }
+        
+        .status-badge { background: #f0fdf4; border: 1px solid #bbf7d0; color: #16a34a; padding: 12px; border-radius: 12px; font-weight: 600; font-size: 15px; margin-bottom: 20px; }
+        .hidden { display: none !none; display: none; }
+        
+        /* Spinner de carregamento interno */
+        .spinner { width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: runSpin 0.8s linear infinite; display: none; }
+        @keyframes runSpin { to { transform: rotate(360deg); } }
+        .loading .spinner { display: inline-block; }
+        .loading .btn-text-content { display: none; }
+    </style>
+</head>
+<body>
+
+    <div id="login-screen" class="card">
+        <div class="logo-area">
+            <div class="logo-container">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
+            </div>
+            <h2>Portaria Virtual</h2>
+            <p class="subtitle" id="login-status-text">Carregando lista de funcionários...</p>
+        </div>
+        <input type="text" id="matricula-input" placeholder="Digite seu ID / Matrícula" disabled>
+        <div style="margin-top: 16px;">
+            <button id="login-btn" class="btn-primary" onclick="efetuarLogin()" disabled>Entrar</button>
+        </div>
+    </div>
+
+    <div id="main-screen" class="card hidden">
+        <div class="logo-area">
+            <h2>Olá, <span id="nome-usuario" style="color: var(--primary);"></span></h2>
+            <p class="subtitle" style="margin-bottom: 12px;">ID: <span id="id-usuario"></span></p>
+        </div>
+        
+        <div id="box-checkin">
+            <p style="font-size: 14px; color: var(--text-light); text-align: left; margin: 0 0 8px 4px;">Selecione o Hotel:</p>
+            <div class="hotel-grid">
+                <div class="hotel-card selected" id="card-sb" onclick="selecionarHotel('Santa Bárbara')">Santa Bárbara</div>
+                <div class="hotel-card" id="card-res" onclick="selecionarHotel('Resplendor')">Resplendor</div>
+            </div>
+            <button id="btn-checkin" class="btn-primary" onclick="enviarRegistro('Check-in')">
+                <div class="spinner"></div>
+                <span class="btn-text-content">Confirmar Check-in</span>
+            </button>
+        </div>
+
+        <div id="box-checkout" class="hidden">
+            <div class="status-badge">
+                Hospedado em:<br><span id="hotel-atual-nome"></span>
+            </div>
+            <button id="btn-checkout" class="btn-danger" onclick="enviarRegistro('Check-out')">
+                <div class="spinner"></div>
+                <span class="btn-text-content">Realizar Check-out</span>
+            </button>
+        </div>
+
+        <button class="btn-text" onclick="efetuarLogout()">Alternar funcionário</button>
+    </div>
+
+    <script>
+        // COLE SUA URL DA IMPLANTAÇÃO DO APPS SCRIPT AQUI
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyHnH_dSbASWY8ekHq_1uWixdUo29jj6iXj_h4HLUvvFpKkWuJDY5Lsi42cZMoAO_hZtg/exec";
+
+        let dbFuncionarios = [];
+        let hotelSelecionado = "Santa Bárbara";
+
+        window.addEventListener('load', () => {
+            carregarFuncionarios();
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('sw.js').catch(e => console.log(e));
+            }
+        });
+
+        function carregarFuncionarios() {
+            fetch(`${WEB_APP_URL}?action=getFuncionarios`)
+                .then(res => res.json())
+                .then(data => {
+                    dbFuncionarios = data;
+                    document.getElementById('login-status-text').innerText = "Insira suas credenciais para acessar.";
+                    document.getElementById('matricula-input').disabled = false;
+                    document.getElementById('login-btn').disabled = false;
+                    gerenciarTelas();
+                })
+                .catch(err => {
+                    document.getElementById('login-status-text').innerText = "Erro ao carregar dados. Verifique a conexão.";
+                    console.error(err);
+                    gerenciarTelas(); 
+                });
+        }
+
+        function gerenciarTelas() {
+            const savedId = localStorage.getItem('h_id');
+            const savedNome = localStorage.getItem('h_nome');
+            const savedStatus = localStorage.getItem('h_status');
+            const savedHotel = localStorage.getItem('h_hotel');
+
+            if (savedId && savedNome) {
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('main-screen').classList.remove('hidden');
+                document.getElementById('nome-usuario').innerText = savedNome;
+                document.getElementById('id-usuario').innerText = savedId;
+
+                if (savedStatus === 'Check-in') {
+                    document.getElementById('box-checkin').classList.add('hidden');
+                    document.getElementById('box-checkout').classList.remove('hidden');
+                    document.getElementById('hotel-atual-nome').innerText = savedHotel;
+                } else {
+                    document.getElementById('box-checkin').classList.remove('hidden');
+                    document.getElementById('box-checkout').classList.add('hidden');
+                }
+            } else {
+                document.getElementById('login-screen').classList.remove('hidden');
+                document.getElementById('main-screen').classList.add('hidden');
+            }
+        }
+
+        function efetuarLogin() {
+            const digitado = document.getElementById('matricula-input').value.trim();
+            if (!digitado) return alert('Digite seu ID.');
+
+            // Valida contra a aba "Funcionarios" puxada do Sheets
+            const colaborador = dbFuncionarios.find(f => f.id === digitado);
+
+            if (colaborador) {
+                localStorage.setItem('h_id', colaborador.id);
+                localStorage.setItem('h_nome', colaborador.nome);
+                gerenciarTelas();
+            } else {
+                alert('ID ou Matrícula não encontrada no sistema. Fale com a supervisão.');
+            }
+        }
+
+        function selecionarHotel(nome) {
+            hotelSelecionado = nome;
+            if (nome === 'Santa Bárbara') {
+                document.getElementById('card-sb').classList.add('selected');
+                document.getElementById('card-res').classList.remove('selected');
+            } else {
+                document.getElementById('card-res').classList.add('selected');
+                document.getElementById('card-sb').classList.remove('selected');
+            }
+        }
+
+        function enviarRegistro(acao) {
+            const id = localStorage.getItem('h_id');
+            let hotel = acao === 'Check-in' ? hotelSelecionado : localStorage.getItem('h_hotel');
+
+            if (!navigator.geolocation) return alert('Seu dispositivo não possui GPS ativo.');
+
+            const btn = acao === 'Check-in' ? document.getElementById('btn-checkin') : document.getElementById('btn-checkout');
+            btn.classList.add('loading');
+            btn.disabled = true;
+
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    const dadosEnvio = {
+                        matricula: id,
+                        hotel: hotel,
+                        acao: acao,
+                        lat: pos.coords.latitude,
+                        lon: pos.coords.longitude
+                    };
+
+                    fetch(WEB_APP_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(dadosEnvio)
+                    })
+                    .then(() => {
+                        localStorage.setItem('h_status', acao);
+                        localStorage.setItem('h_hotel', hotel);
+                        alert(`${acao} realizado com sucesso!`);
+                        gerenciarTelas();
+                    })
+                    .catch(e => alert('Erro de rede ao salvar.'))
+                    .finally(() => {
+                        btn.classList.remove('loading');
+                        btn.disabled = false;
+                    });
+                },
+                (err) => {
+                    alert('Ative a localização/GPS do seu celular para registrar.');
+                    btn.classList.remove('loading');
+                    btn.disabled = false;
+                },
+                { enableHighAccuracy: true, timeout: 10000 }
+            );
+        }
+
+        function efetuarLogout() {
+            if (confirm('Deseja desconectar este usuário?')) {
+                localStorage.clear();
+                document.getElementById('matricula-input').value = '';
+                gerenciarTelas();
+            }
+        }
+    </script>
+</body>
+</html>
