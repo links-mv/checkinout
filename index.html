@@ -3,21 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hospedagem Maquinistas - VIC</title>
+    <title>Checkinout Maquinistas</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#004b87">
     <style>
         :root {
-            /* Cores VLI */
+            /* Paleta Oficial VLI */
             --vli-blue: #004b87;
-            --vli-blue-hover: #003a6b;
+            --vli-blue-dark: #002b4d;
             --vli-orange: #f26a21;
             --vli-orange-hover: #d95e1c;
             
-            --bg-color: #f4f7f9;
+            --bg-gradient: linear-gradient(135deg, #004b87 0%, #002544 100%);
             --card-bg: #ffffff;
-            --text-main: #2d3748;
-            --text-light: #718096;
+            --text-main: #1e293b;
+            --text-light: #64748b;
             --border-color: #e2e8f0;
         }
 
@@ -29,7 +29,7 @@
         }
 
         body { 
-            background-color: var(--bg-color); 
+            background: var(--bg-gradient); 
             color: var(--text-main); 
             display: flex; 
             flex-direction: column; 
@@ -39,31 +39,33 @@
             padding: 20px;
         }
         
+        /* Card Corporativo Premium */
         .card { 
             background: var(--card-bg); 
             padding: 40px 30px; 
-            border-radius: 16px; 
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02); 
+            border-radius: 20px; 
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3); 
             width: 100%; 
             max-width: 400px; 
             text-align: center; 
-            border: 1px solid var(--border-color); 
+            border-top: 6px solid var(--vli-orange); /* Destaque em Laranja VLI */
+            position: relative;
         }
         
-        .logo-area { margin-bottom: 30px; }
+        .logo-area { margin-bottom: 25px; }
         
         .logo-img {
-            max-width: 140px;
+            max-width: 150px;
             height: auto;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             display: inline-block;
         }
         
         h2 { 
-            font-size: 24px; 
-            font-weight: 700; 
-            margin-bottom: 8px; 
-            color: var(--text-main); 
+            font-size: 26px; 
+            font-weight: 800; 
+            margin-bottom: 6px; 
+            color: var(--vli-blue); 
             letter-spacing: -0.5px;
         }
         
@@ -71,30 +73,32 @@
             color: var(--text-light); 
             font-size: 14px; 
             line-height: 1.5; 
+            font-weight: 500;
         }
         
         input[type="text"] { 
             width: 100%; 
             padding: 16px; 
-            border: 1px solid var(--border-color); 
+            border: 2px solid var(--border-color); 
             border-radius: 12px; 
             font-size: 16px; 
             background-color: #f8fafc; 
             transition: all 0.3s ease; 
             text-align: center; 
-            font-weight: 600; 
+            font-weight: 700; 
+            color: var(--vli-blue);
             letter-spacing: 1px; 
             margin-bottom: 20px;
         }
         
         input[type="text"]:focus { 
             outline: none; 
-            border-color: var(--vli-blue); 
+            border-color: var(--vli-orange); 
             background-color: #fff; 
-            box-shadow: 0 0 0 4px rgba(0, 75, 135, 0.1); 
+            box-shadow: 0 0 0 4px rgba(242, 106, 33, 0.15); 
         }
         
-        /* Grid de Hotéis */
+        /* Grid de Hotéis com Identidade VLI */
         .hotel-grid { 
             display: grid; 
             grid-template-columns: 1fr 1fr; 
@@ -107,7 +111,7 @@
             padding: 16px 8px; 
             border-radius: 12px; 
             cursor: pointer; 
-            font-weight: 600; 
+            font-weight: 700; 
             font-size: 14px; 
             transition: all 0.2s ease; 
             background: #fff; 
@@ -116,10 +120,11 @@
         
         .hotel-card:hover { border-color: #cbd5e1; }
         
+        /* Estado selecionado puxando o Laranja VLI */
         .hotel-card.selected { 
-            border-color: var(--vli-blue); 
-            background: rgba(0, 75, 135, 0.04); 
-            color: var(--vli-blue); 
+            border-color: var(--vli-orange); 
+            background: rgba(242, 106, 33, 0.08); 
+            color: var(--vli-orange-hover); 
         }
         
         button { 
@@ -127,7 +132,7 @@
             padding: 16px; 
             border-radius: 12px; 
             font-size: 16px; 
-            font-weight: 600; 
+            font-weight: 700; 
             border: none; 
             cursor: pointer; 
             transition: all 0.2s ease; 
@@ -135,23 +140,25 @@
             align-items: center; 
             justify-content: center; 
             gap: 10px; 
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         
         .btn-primary { 
             background-color: var(--vli-blue); 
             color: white; 
-            box-shadow: 0 4px 12px rgba(0, 75, 135, 0.15);
+            box-shadow: 0 4px 14px rgba(0, 75, 135, 0.3);
         }
         
         .btn-primary:hover { 
-            background-color: var(--vli-blue-hover); 
+            background-color: var(--vli-blue-dark); 
             transform: translateY(-1px);
         }
         
         .btn-warning { 
             background-color: var(--vli-orange); 
             color: white; 
-            box-shadow: 0 4px 12px rgba(242, 106, 33, 0.15);
+            box-shadow: 0 4px 14px rgba(242, 106, 33, 0.3);
         }
         
         .btn-warning:hover { 
@@ -160,27 +167,28 @@
         }
         
         button:disabled { 
-            background-color: #e2e8f0 !important; 
+            background-color: #cbd5e1 !important; 
             color: #94a3b8 !important; 
             cursor: not-allowed; 
+            box-shadow: none !none; 
             box-shadow: none;
             transform: none;
         }
         
         .status-badge { 
-            background: rgba(242, 106, 33, 0.05); 
-            border: 1px solid rgba(242, 106, 33, 0.2); 
-            color: var(--vli-orange-hover); 
-            padding: 16px; 
+            background: rgba(0, 75, 135, 0.05); 
+            border: 1px solid rgba(0, 75, 135, 0.15); 
+            color: var(--vli-blue); 
+            padding: 18px; 
             border-radius: 12px; 
-            font-weight: 600; 
+            font-weight: 700; 
             font-size: 15px; 
             margin-bottom: 24px; 
         }
         
         .hidden { display: none !important; }
         
-        /* Balão/Banner de Instalação PWA */
+        /* Balão de Instalação Customizado */
         .install-banner {
             position: fixed;
             bottom: 20px;
@@ -191,7 +199,7 @@
             background: #ffffff;
             padding: 18px 20px;
             border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
             border-left: 5px solid var(--vli-orange);
             z-index: 9999;
             text-align: left;
@@ -225,21 +233,19 @@
             padding: 8px 14px;
             border-radius: 8px;
             font-size: 13px;
-            font-weight: 600;
+            font-weight: 700;
             margin-top: 10px;
             width: auto;
             display: inline-flex;
-            box-shadow: 0 2px 6px rgba(242, 106, 33, 0.2);
         }
-        .btn-install-now:hover { background-color: var(--vli-orange-hover); }
 
-        /* Animações */
+        /* Transições Fluidas */
         .fade-in {
             animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
         
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
         }
         
@@ -260,24 +266,26 @@
 </head>
 <body>
 
+    <!-- Tela de Login -->
     <div id="login-screen" class="card fade-in">
         <div class="logo-area">
             <img src="logo-pwa.png" alt="Logo VLI" class="logo-img" onerror="this.style.display='none'">
-            <h2>Portal VIC</h2>
-            <p class="subtitle" id="login-status-text">Conectando ao sistema...</p>
+            <h2>Checkinout</h2>
+            <p class="subtitle" id="login-status-text">Conectando à rede da ferrovia...</p>
         </div>
         <input type="text" id="matricula-input" placeholder="Digite seu ID / Matrícula" disabled>
-        <button id="login-btn" class="btn-primary" onclick="efetuarLogin()" disabled>Acessar</button>
+        <button id="login-btn" class="btn-primary" onclick="efetuarLogin()" disabled>Acessar Sistema</button>
     </div>
 
+    <!-- Tela Principal (Sessão Fixa) -->
     <div id="main-screen" class="card hidden">
         <div class="logo-area">
-            <h2>Olá, <span id="nome-usuario" style="color: var(--vli-blue);"></span></h2>
-            <p class="subtitle">ID: <span id="id-usuario"></span></p>
+            <h2>Olá, <span id="nome-usuario" style="color: var(--vli-orange);"></span></h2>
+            <p class="subtitle">Matrícula: <span id="id-usuario"></span></p>
         </div>
         
         <div id="box-checkin" class="fade-in">
-            <p style="font-size: 14px; color: var(--text-light); text-align: left; margin: 0 0 8px 4px; font-weight: 500;">Selecione o Hotel:</p>
+            <p style="font-size: 14px; color: var(--text-light); text-align: left; margin: 0 0 8px 4px; font-weight: 600;">Selecione o Hotel:</p>
             <div class="hotel-grid">
                 <div class="hotel-card selected" id="card-sb" onclick="selecionarHotel('Santa Bárbara')">Santa Bárbara</div>
                 <div class="hotel-card" id="card-res" onclick="selecionarHotel('Resplendor')">Resplendor</div>
@@ -290,7 +298,8 @@
 
         <div id="box-checkout" class="hidden fade-in">
             <div class="status-badge">
-                Hospedado em:<br><span id="hotel-atual-nome" style="font-size: 18px; margin-top: 4px; display: block;"></span>
+                Hospedagem Ativa em:<br>
+                <span id="hotel-atual-nome" style="font-size: 18px; margin-top: 6px; display: block; font-weight: 800; color: var(--vli-orange);"></span>
             </div>
             <button id="btn-checkout" class="btn-warning" onclick="enviarRegistro('Check-out')">
                 <div class="spinner"></div>
@@ -299,10 +308,11 @@
         </div>
     </div>
 
+    <!-- Balão de Instalação PWA -->
     <div id="install-banner" class="install-banner hidden fade-in">
         <button class="install-close" onclick="fecharBannerInstall()">×</button>
-        <h4>Instalar Aplicativo</h4>
-        <p id="install-instructions">Adicione o app à sua tela inicial para um acesso mais rápido e uso simplificado.</p>
+        <h4>Instalar Checkinout</h4>
+        <p id="install-instructions">Adicione este app à tela inicial para bater seus registros com máxima rapidez na escala.</p>
         <button id="btn-install-pwa" class="btn-install-now hidden" onclick="dispararInstalacao()">Instalar agora</button>
     </div>
 
@@ -321,27 +331,23 @@
             }
         });
 
-        // Gerencia as instruções de instalação do Web App baseadas no aparelho
         function inicializarInstalacaoPWA() {
             const installBanner = document.getElementById('install-banner');
             const installInstructions = document.getElementById('install-instructions');
             const btnInstallPwa = document.getElementById('btn-install-pwa');
 
             const isStandalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
-            if (isStandalone) return; // Já está instalado, não exibe nada.
+            if (isStandalone) return; 
 
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
             if (isIOS) {
-                // Configuração customizada para dispositivos Apple
-                installInstructions.innerHTML = "Toque no ícone de <strong>Compartilhar</strong> (quadrado com uma seta para cima) e selecione <strong>'Adicionar à Tela de Início'</strong>.";
+                installInstructions.innerHTML = "Toque no ícone de <strong>Compartilhar</strong> (quadrado com uma seta para cima) na barra do Safari e selecione <strong>'Adicionar à Tela de Início'</strong>.";
                 installBanner.classList.remove('hidden');
             } else {
-                // Captura o evento nativo do Android/Chrome
                 window.addEventListener('beforeinstallprompt', (e) => {
                     e.preventDefault();
                     deferredPrompt = e;
-                    installInstructions.innerText = "Adicione o Portal VIC à sua tela inicial para bater o check-in de forma estável e rápida.";
                     btnInstallPwa.classList.remove('hidden');
                     installBanner.classList.remove('hidden');
                 });
@@ -352,9 +358,7 @@
             if (!deferredPrompt) return;
             deferredPrompt.prompt();
             deferredPrompt.userChoice.then((choiceResult) => {
-                if (choiceResult.outcome === 'accepted') {
-                    fecharBannerInstall();
-                }
+                if (choiceResult.outcome === 'accepted') fecharBannerInstall();
                 deferredPrompt = null;
             });
         }
@@ -384,7 +388,7 @@
                     document.getElementById('login-btn').disabled = false;
                 })
                 .catch(err => {
-                    document.getElementById('login-status-text').innerText = "Erro de conexão. Tente novamente.";
+                    document.getElementById('login-status-text').innerText = "Erro ao conectar. Recarregue a página.";
                     console.error(err);
                 });
         }
@@ -415,7 +419,7 @@
             }
         }
 
-        function efetuarLogin() {
+        function efectuarLogin() {
             const digitado = document.getElementById('matricula-input').value.trim();
             if (!digitado) return alert('Digite seu ID.');
 
@@ -431,7 +435,7 @@
                 localStorage.setItem('h_nome', colaborador.nome);
                 gerenciarTelas();
             } else {
-                alert('ID não encontrado. Fale com a supervisão.');
+                alert('ID não encontrado no sistema da ferrovia.');
                 btn.disabled = false;
                 input.disabled = false;
             }
