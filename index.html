@@ -170,8 +170,7 @@
             background-color: #cbd5e1 !important; 
             color: #94a3b8 !important; 
             cursor: not-allowed; 
-            box-shadow: none !none; 
-            box-shadow: none;
+            box-shadow: none !important; 
             transform: none;
         }
         
@@ -226,6 +225,7 @@
             cursor: pointer;
             width: auto;
             padding: 0;
+            box-shadow: none;
         }
         .btn-install-now {
             background-color: var(--vli-orange);
@@ -237,6 +237,7 @@
             margin-top: 10px;
             width: auto;
             display: inline-flex;
+            box-shadow: none;
         }
 
         /* Transições Fluidas */
@@ -419,7 +420,8 @@
             }
         }
 
-        function efectuarLogin() {
+        // Função corrigida de efectuarLogin para efetuarLogin
+        function efetuarLogin() {
             const digitado = document.getElementById('matricula-input').value.trim();
             if (!digitado) return alert('Digite seu ID.');
 
