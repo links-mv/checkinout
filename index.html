@@ -52,7 +52,6 @@
         
         .logo-area { margin-bottom: 30px; }
         
-        /* Ajuste da logo da VLI */
         .logo-img {
             max-width: 140px;
             height: auto;
@@ -115,9 +114,7 @@
             color: var(--text-light); 
         }
         
-        .hotel-card:hover {
-            border-color: #cbd5e1;
-        }
+        .hotel-card:hover { border-color: #cbd5e1; }
         
         .hotel-card.selected { 
             border-color: var(--vli-blue); 
@@ -183,7 +180,60 @@
         
         .hidden { display: none !important; }
         
-        /* Animações para fluidez */
+        /* Balão/Banner de Instalação PWA */
+        .install-banner {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 32px);
+            max-width: 400px;
+            background: #ffffff;
+            padding: 18px 20px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border-left: 5px solid var(--vli-orange);
+            z-index: 9999;
+            text-align: left;
+        }
+        .install-banner h4 {
+            font-size: 15px;
+            color: var(--vli-blue);
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .install-banner p {
+            font-size: 13px;
+            color: var(--text-light);
+            line-height: 1.4;
+        }
+        .install-close {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 18px;
+            cursor: pointer;
+            width: auto;
+            padding: 0;
+        }
+        .btn-install-now {
+            background-color: var(--vli-orange);
+            color: white;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 10px;
+            width: auto;
+            display: inline-flex;
+            box-shadow: 0 2px 6px rgba(242, 106, 33, 0.2);
+        }
+        .btn-install-now:hover { background-color: var(--vli-orange-hover); }
+
+        /* Animações */
         .fade-in {
             animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
@@ -193,7 +243,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
         
-        /* Spinner */
         .spinner { 
             width: 20px; 
             height: 20px; 
@@ -250,24 +299,74 @@
         </div>
     </div>
 
+    <div id="install-banner" class="install-banner hidden fade-in">
+        <button class="install-close" onclick="fecharBannerInstall()">×</button>
+        <h4>Instalar Aplicativo</h4>
+        <p id="install-instructions">Adicione o app à sua tela inicial para um acesso mais rápido e uso simplificado.</p>
+        <button id="btn-install-pwa" class="btn-install-now hidden" onclick="dispararInstalacao()">Instalar agora</button>
+    </div>
+
     <script>
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyHnH_dSbASWY8ekHq_1uWixdUo29jj6iXj_h4HLUvvFpKkWuJDY5Lsi42cZMoAO_hZtg/exec";
 
         let dbFuncionarios = [];
         let hotelSelecionado = "Santa Bárbara";
+        let deferredPrompt;
 
         window.addEventListener('load', () => {
             verificarSessaoAtiva();
+            inicializarInstalacaoPWA();
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('sw.js').catch(e => console.log(e));
             }
         });
 
+        // Gerencia as instruções de instalação do Web App baseadas no aparelho
+        function inicializarInstalacaoPWA() {
+            const installBanner = document.getElementById('install-banner');
+            const installInstructions = document.getElementById('install-instructions');
+            const btnInstallPwa = document.getElementById('btn-install-pwa');
+
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+            if (isStandalone) return; // Já está instalado, não exibe nada.
+
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+            if (isIOS) {
+                // Configuração customizada para dispositivos Apple
+                installInstructions.innerHTML = "Toque no ícone de <strong>Compartilhar</strong> (quadrado com uma seta para cima) e selecione <strong>'Adicionar à Tela de Início'</strong>.";
+                installBanner.classList.remove('hidden');
+            } else {
+                // Captura o evento nativo do Android/Chrome
+                window.addEventListener('beforeinstallprompt', (e) => {
+                    e.preventDefault();
+                    deferredPrompt = e;
+                    installInstructions.innerText = "Adicione o Portal VIC à sua tela inicial para bater o check-in de forma estável e rápida.";
+                    btnInstallPwa.classList.remove('hidden');
+                    installBanner.classList.remove('hidden');
+                });
+            }
+        }
+
+        function dispararInstalacao() {
+            if (!deferredPrompt) return;
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    fecharBannerInstall();
+                }
+                deferredPrompt = null;
+            });
+        }
+
+        function fecharBannerInstall() {
+            document.getElementById('install-banner').classList.add('hidden');
+        }
+
         function verificarSessaoAtiva() {
             const savedId = localStorage.getItem('h_id');
             const savedNome = localStorage.getItem('h_nome');
 
-            // Se já tem cache local, pula direto pra tela principal sem buscar lista no Apps Script
             if (savedId && savedNome) {
                 gerenciarTelas();
             } else {
@@ -379,7 +478,6 @@
                         localStorage.setItem('h_status', acao);
                         localStorage.setItem('h_hotel', hotel);
                         
-                        // Atualiza as telas com leve atraso para a animação do botão ser percebida
                         setTimeout(() => {
                             btn.classList.remove('loading');
                             btn.disabled = false;
