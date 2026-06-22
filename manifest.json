@@ -1,5 +1,5 @@
 {
-  "name": "Controle de Estadia Hotelaria",
+  "name": "Checkinout",
   "short_name": "Hospedagem",
   "description": "Registro de check-in e check-out de equipes hospedadas.",
   "start_url": "./index.html",
